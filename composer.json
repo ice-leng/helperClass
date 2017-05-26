@@ -1,0 +1,15 @@
+{
+    "name": "lengbin/helper-class-packagist",
+    "description": "this is my collection helper class",
+    "type": "library",
+    "require": {
+        "phpoffice/phpexcel": "^1.8"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ice-leng",
+            "email": "xykxyk2008@163.com"
+        }
+    ]
+}
