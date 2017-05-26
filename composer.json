@@ -1,11 +1,13 @@
 {
     "name": "lengbin/helper-class",
     "description": "this is my collection helper class",
-    "type": "library",
-    "require": {
-        
-    },
     "license": "MIT",
+    "require": {
+        "phpoffice/phpexcel": "^1.8",
+        "php": ">=5.3.0"
+    },
+
+    "minimum-stability": "dev",
     "authors": [
         {
             "name": "lengbin",
