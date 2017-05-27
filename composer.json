@@ -8,7 +8,12 @@
     },
 
     "minimum-stability": "stable",
-    "version": "1.0",
+
+    "autoload": {
+        "psr-4": {
+            "Lengbin\\Helpers\\Directory": "scr/Directory"
+        }
+    },
     "authors": [
         {
             "name": "lengbin",
