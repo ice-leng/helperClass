@@ -6,7 +6,7 @@
  * Time: 下午11:24
  */
 
-namespace common\helpers;
+namespace Lengbin\Helpers\Directory;
 
 /**
  * 读取目录帮助类，
