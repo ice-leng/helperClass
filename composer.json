@@ -11,7 +11,7 @@
 
     "autoload": {
         "psr-4": {
-            "Lengbin\\Helpers\\Directorys\\": "scr/Directory"
+            "lengbin\\helper\\directory\\": "scr/directory"
         }
     },
     "authors": [
