@@ -11,7 +11,9 @@
 
     "autoload": {
         "psr-4": {
-            "lengbin\\helper\\directory\\": "scr/directory"
+            "lengbin\\helper\\directory\\": "scr/directory",
+            "lengbin\\helper\\upload\\": "scr/upload",
+            "lengbin\\helper\\excel\\": "scr/excel"
         }
     },
     "authors": [
