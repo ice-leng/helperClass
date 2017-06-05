@@ -66,7 +66,7 @@ class NumberHelper
      */
     public static function randStr($num = 10)
     {
-        $chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         $string = "";
         for ($i = 0; $i < $num; $i++) {
             $string .= substr($chars, rand(0, strlen($chars)), 1);
