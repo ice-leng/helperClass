@@ -17,7 +17,8 @@
             "lengbin\\helper\\curl\\": "scr/curl",
             "lengbin\\helper\\number\\": "scr/number",
             "lengbin\\helper\\pinyin\\": "scr/pinyin",
-            "lengbin\\helper\\util\\": "scr/util"
+            "lengbin\\helper\\util\\": "scr/util",
+            "lengbin\\helper\\math\\": "scr/math"
         }
     },
     "authors": [
