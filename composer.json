@@ -14,7 +14,10 @@
             "lengbin\\helper\\directory\\": "scr/directory",
             "lengbin\\helper\\upload\\": "scr/upload",
             "lengbin\\helper\\excel\\": "scr/excel",
-            "lengbin\\helper\\curl\\": "scr/curl"
+            "lengbin\\helper\\curl\\": "scr/curl",
+            "lengbin\\helper\\number\\": "scr/number",
+            "lengbin\\helper\\pinyin\\": "scr/pinyin",
+            "lengbin\\helper\\util\\": "scr/util"
         }
     },
     "authors": [
