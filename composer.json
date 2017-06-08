@@ -19,7 +19,9 @@
             "lengbin\\helper\\pinyin\\": "scr/pinyin",
             "lengbin\\helper\\util\\": "scr/util",
             "lengbin\\helper\\math\\": "scr/math",
-            "lengbin\\helper\\image\\": "scr/image"
+            "lengbin\\helper\\image\\": "scr/image",
+            "lengbin\\helper\\mysql\\": "scr/mysql"
+
         }
     },
     "authors": [
