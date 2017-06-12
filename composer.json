@@ -11,16 +11,16 @@
 
     "autoload": {
         "psr-4": {
-            "lengbin\\helper-class\\directory\\": "scr/directory",
-            "lengbin\\helper-class\\upload\\": "scr/upload",
-            "lengbin\\helper-class\\excel\\": "scr/excel",
-            "lengbin\\helper-class\\curl\\": "scr/curl",
-            "lengbin\\helper-class\\number\\": "scr/number",
-            "lengbin\\helper-class\\pinyin\\": "scr/pinyin",
-            "lengbin\\helper-class\\util\\": "scr/util",
-            "lengbin\\helper-class\\math\\": "scr/math",
-            "lengbin\\helper-class\\image\\": "scr/image",
-            "lengbin\\helper-class\\mysql\\": "scr/mysql"
+            "lengbin\\helper\\directory\\": "src/directory",
+            "lengbin\\helper\\upload\\": "src/upload",
+            "lengbin\\helper\\excel\\": "src/excel",
+            "lengbin\\helper\\curl\\": "src/curl",
+            "lengbin\\helper\\number\\": "src/number",
+            "lengbin\\helper\\pinyin\\": "src/pinyin",
+            "lengbin\\helper\\util\\": "src/util",
+            "lengbin\\helper\\math\\": "src/math",
+            "lengbin\\helper\\image\\": "src/image",
+            "lengbin\\helper\\mysql\\": "src/mysql"
         }
     },
     "authors": [
