@@ -10,9 +10,7 @@
     "minimum-stability": "stable",
 
     "autoload": {
-        "psr-0": {
-            "lengbin\\helper\\directory\\": "scr/"
-        }
+        "classmap": ["scr/"]
     },
     "authors": [
         {
