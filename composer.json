@@ -10,7 +10,18 @@
     "minimum-stability": "stable",
 
     "autoload": {
-        "classmap": ["scr/"]
+        "psr-4": {
+            "lengbin\\helper-class\\directory\\": "scr/directory",
+            "lengbin\\helper-class\\upload\\": "scr/upload",
+            "lengbin\\helper-class\\excel\\": "scr/excel",
+            "lengbin\\helper-class\\curl\\": "scr/curl",
+            "lengbin\\helper-class\\number\\": "scr/number",
+            "lengbin\\helper-class\\pinyin\\": "scr/pinyin",
+            "lengbin\\helper-class\\util\\": "scr/util",
+            "lengbin\\helper-class\\math\\": "scr/math",
+            "lengbin\\helper-class\\image\\": "scr/image",
+            "lengbin\\helper-class\\mysql\\": "scr/mysql"
+        }
     },
     "authors": [
         {
