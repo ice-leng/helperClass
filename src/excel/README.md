@@ -31,6 +31,21 @@
 
 
  // 使用
+ 
+  /**
+   * 下载文件路径 当前域名+uploads+filename
+   *
+   * @param string $file 文件路径
+   *
+   * @return string
+   * @auth ice.leng(lengbin0@gmail.com)
+   * @issue
+   */
+ protected function getUploadUrl($file)
+ {
+     return \Yii::$app->urlManager->createAbsoluteUrl('uploads') . '/' . $file;
+ }
+ 
  /**
   * 导入类
   *
@@ -58,6 +73,7 @@
  if( !$rs || $csv ){
      $len = strpos( $csv, 'uploads' );
      //上传文件的路径 + error.csv 文件名称， 此错误为上传文件内容错误
+     // 一般为当前域名/uploads + error.csv 
      $str = $this->getUploadUrl(substr($csv, ($len+8 ), strlen($csv)));
      //异常抛出
      $this->invalidParamException(CodeHelper::EXCEL_IMPORT_STUDENT_ERRORS_FILE, ['file' => $str]);
