@@ -53,8 +53,6 @@
                  [['mobile'], 'mobile'],
              ],
          ]);
- $import->role = ConstantHelper::SYS_ROLE_STUDENT;
- $import->isNeedCourseId = false;
  $rs = $import->processing();
  $csv = $import->createErrorCsv();
  if( !$rs || $csv ){
@@ -126,26 +124,26 @@ class DemoImport extends BaseImport
 /**
  *
  * @param array $config $config = [
-                            'width' => '24',
-                            'height'=> '15',
-                            'th' =>[     // td数据字段 => th 名称
-                                'attr' => '规格',
-                                'stock' => '库存',
-                                'product_price' => '供货价',
-                                'sale_price' => '平台价',
-                                'retail_price' => '建议零售价',
-                                'market_price' => '市场参考价',
-                            ],
-                            'style' => [
-                                'thBackGroundColor' => '003396e3',  // th 背景颜色, 默认为蓝色
-                                'thFontIsBold' => true,       // th 字体是否加粗， 默认为是
-                                'thFontColor' => '00ffffff',      // th 字体颜色， 默认为白色
-                                'tdBackGroundColor' =>['00ecf7ff','00222222'] / '00ecf7ff',   //  td 背景颜色, 默认为淡蓝色  可以是数组。 表示td 分割颜色， 字符串着为 全部颜色
-                            ],
+ *                          'width' => '24',
+ *                          'height'=> '15',
+ *                          'th' =>[     // td数据字段 => th 名称
+ *                              'attr' => '规格',
+ *                              'stock' => '库存',
+ *                              'product_price' => '供货价',
+ *                              'sale_price' => '平台价',
+ *                              'retail_price' => '建议零售价',
+ *                              'market_price' => '市场参考价',
+ *                          ],
+ *                          'style' => [
+ *                              'thBackGroundColor' => '003396e3',  // th 背景颜色, 默认为蓝色
+ *                              'thFontIsBold' => true,       // th 字体是否加粗， 默认为是
+ *                              'thFontColor' => '00ffffff',      // th 字体颜色， 默认为白色
+ *                              'tdBackGroundColor' =>['00ecf7ff','00222222'] / '00ecf7ff',   //  td 背景颜色, 默认为淡蓝色  可以是数组。 表示td 分割颜色， 字符串着为 全部颜色
+ *                          ],
  *                          'rules' => [
-                               [], 'money'
-                            ]
-                        ];
+ *                             [], 'money'
+ *                          ]
+ *                      ];
  *                      颜色都是16进制
  *                      目前只有 金额 格式化
  */
