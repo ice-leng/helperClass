@@ -59,10 +59,12 @@
      $len = strpos( $csv, 'uploads' );
      //上传文件的路径 + error.csv 文件名称， 此错误为上传文件内容错误
      $str = $this->getUploadUrl(substr($csv, ($len+8 ), strlen($csv)));
+     //异常抛出
      $this->invalidParamException(CodeHelper::EXCEL_IMPORT_STUDENT_ERRORS_FILE, ['file' => $str]);
  }
  // 此错误为文件类型， title 错误
  if($import->getErrors()){
+     //异常抛出
      $this->invalidParamException(CodeHelper::EXCEL_IMPORT_STUDENT_ERRORS, $import->getErrors());
  }
 
