@@ -20,7 +20,8 @@
             "lengbin\\helper\\util\\": "src/util",
             "lengbin\\helper\\math\\": "src/math",
             "lengbin\\helper\\image\\": "src/image",
-            "lengbin\\helper\\mysql\\": "src/mysql"
+            "lengbin\\helper\\mysql\\": "src/mysql",
+            "lengbin\\helper\\yii2\\": "src/yii2"
         }
     },
     "authors": [
