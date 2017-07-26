@@ -79,4 +79,44 @@ class FileHelper
         $ext = array_pop($ext);
         return strtolower($ext);
     }
+
+    /**
+     * 读取文件最后几条内容
+     *
+     * @param string $file
+     * @param int    $num
+     *
+     * @return array
+     * @author lengbin(lengbin0@gmail.com)
+     */
+    public static function readFileLastContent($file, $num = 1)
+    {
+        $fp = fopen($file, "r");
+        $pos = -2;
+        $eof = "";
+        $head = false;   //当总行数小于Num时，判断是否到第一行了
+        $lines = [];
+        while ($num > 0) {
+            while ($eof !== "\n") {
+                if (fseek($fp, $pos, SEEK_END) === 0) {
+                    $eof = fgetc($fp);
+                    $pos--;
+                } else {
+                    fseek($fp, 0, SEEK_SET);
+                    $head = true;
+                    break;
+                }
+
+            }
+            array_unshift($lines, fgets($fp));
+            if ($head) {
+                break;
+            }
+            $eof = "";
+            $num--;
+        }
+        fclose($fp);
+        return $lines;
+    }
+
 }

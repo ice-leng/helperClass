@@ -25,7 +25,7 @@ class DirHelper
         $pathinfo = pathinfo($path . '/tmp.txt');
         if (!empty($pathinfo['dirname'])) {
             if (file_exists($pathinfo['dirname']) === false) {
-                if (mkdir($pathinfo['dirname'], 0777, true) === false) {
+                if (@mkdir($pathinfo['dirname'], 0777, true) === false) {
                     return false;
                 }
             }
@@ -33,35 +33,55 @@ class DirHelper
         return $path;
     }
 
+    public static $rootDir;
+
     /**
-     * 递归删除目录
+     * 递归清空目录
      *
-     * @param string $dir 文件夹路径
+     * @param string  $dir     文件夹路径
+     * @param boolean $isDelete 是否删除根目录目录
      *
      * @return bool
      * @author lengbin(lengbin0@gmail.com)
      */
-    public static function delDir($dir)
+    public static function emptyDir($dir, $isDelete = false)
     {
+        if (empty(self::$rootDir)) {
+            self::$rootDir = $dir;
+        }
         //先删除目录下的文件：
         $dh = opendir($dir);
         while ($file = readdir($dh)) {
-            if ($file != "." && $file != "..") {
-                $fullPath = $dir . "/" . $file;
+            if ($file !== '.' && $file !== '..') {
+                $fullPath = $dir . '/' . $file;
                 if (!is_dir($fullPath)) {
-                    unlink($fullPath);
+                    @unlink($fullPath);
                 } else {
-                    self::delDir($fullPath);
+                    self::emptyDir($fullPath, $isDelete);
                 }
             }
         }
         closedir($dh);
         //删除当前文件夹：
-        if (rmdir($dir)) {
-            return true;
+        if ($dir !== self::$rootDir) {
+            return self::delDir($dir);
         } else {
-            return false;
+            return $isDelete ? self::delDir($dir) : true;
         }
+
+    }
+
+    /**
+     * 删除目录
+     *
+     * @param string $dir
+     *
+     * @return bool
+     * @author lengbin(lengbin0@gmail.com)
+     */
+    private static function delDir($dir)
+    {
+        return @rmdir($dir) ? true : false;
     }
 
     /**
@@ -80,7 +100,7 @@ class DirHelper
         }
         $dh = opendir($path);
         while (($file = readdir($dh)) !== false) {
-            if ($file != '.' && $file != '..') {
+            if ($file !== '.' && $file !== '..') {
                 $fullPath = $path . '/' . $file;
                 if (is_link($fullPath)) {
                     return FALSE;
@@ -98,4 +118,33 @@ class DirHelper
             return FALSE;
         }
     }
+
+    /**
+     * 复制文件夹/文件
+     *
+     * @param string $src        源路径
+     * @param string $dst        复制路径
+     * @param array  $filterDir  过滤文件夹
+     * @param array  $filterFile 过滤文件
+     *
+     * @author lengbin(lengbin0@gmail.com)
+     */
+    public static function copyDir($src, $dst, array $filterDir = [], array $filterFile = [])
+    {
+        $dir = opendir($src);
+        self::pathExists($dst);
+        while (false !== ($file = readdir($dir))) {
+            if (($file !== '.') && ($file !== '..') && !in_array($file, $filterDir)) {
+                if (is_dir($src . "/" . $file)) {
+                    self::copyDir($src . "/" . $file, $dst . "/" . $file);
+                } else {
+                    if (!in_array($file, $filterFile)) {
+                        @copy($src . "/" . $file, $dst . "/" . $file);
+                    }
+                }
+            }
+        }
+        closedir($dir);
+    }
+
 }

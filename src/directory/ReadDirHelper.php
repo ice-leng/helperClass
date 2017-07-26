@@ -100,7 +100,7 @@ class ReadDirHelper
         $handle = opendir($dir);
         while (($fileName = readdir($handle)) !== false) {
             // 过滤 过滤目录， 过滤文件
-            if ($fileName != "." && $fileName != ".." && !in_array($fileName, $this->_filterDirs) && !in_array($fileName, $this->_filterFiles)) {
+            if ($fileName !== '.' && $fileName !== '..' && !in_array($fileName, $this->_filterDirs) && !in_array($fileName, $this->_filterFiles)) {
                 $path = $dir . '/' . $fileName;
                 if (is_dir($path)) {
                     $this->_readDir($path);
