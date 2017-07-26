@@ -22,7 +22,7 @@ namespace lengbin\helper\directory;
  *      返回可以根据目录结构返回
  *      返回可以获得文件目录 / 文件结构目录
  *
- * @package common\helpers
+ * @package lengbin\helper\directory
  */
 class ReadDirHelper
 {
