@@ -100,17 +100,22 @@ class ReadDirHelper
         $handle = opendir($dir);
         while (($fileName = readdir($handle)) !== false) {
             // 过滤 过滤目录， 过滤文件
-            if ($fileName !== '.' && $fileName !== '..' && !in_array($fileName, $this->_filterDirs) && !in_array($fileName, $this->_filterFiles)) {
+            if ($fileName !== '.' && $fileName !== '..' && !in_array($fileName, $this->_filterDirs)) {
                 $path = $dir . '/' . $fileName;
                 if (is_dir($path)) {
                     $this->_readDir($path);
                 } else {
-                    if (is_file($path)) {
+                    if (is_file($path) && !in_array($fileName, $this->_filterFiles)) {
                         if ($this->_isNamespace) {
-                            $pathInfo = pathinfo($path);
-                            $filePath = substr($pathInfo['dirname'], strpos($pathInfo['dirname'], $this->_rootDirName));
-                            $filePath = $filePath . '/' . $pathInfo['filename'];
-                            $path = str_replace('/', '\\', $filePath);
+                            $obj = new $fileName;
+                            $reflection = new \ReflectionClass($obj);
+                            $path = $reflection->getNamespaceName();
+                            if (empty($path)) {
+                                $pathInfo = pathinfo($path);
+                                $filePath = substr($pathInfo['dirname'], strpos($pathInfo['dirname'], $this->_rootDirName));
+                                $filePath = $filePath . '/' . $pathInfo['filename'];
+                                $path = str_replace('/', '\\', $filePath);
+                            }
                         }
                         // 是否存在 目标目录， 当前目录是否在目标目录中， 如果没有 continue
                         if (!empty($this->_targetDir) && !in_array(basename($dir), $this->_targetDir)) {
