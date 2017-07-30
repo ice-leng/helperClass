@@ -122,24 +122,28 @@ class DirHelper
     /**
      * 复制文件夹/文件
      *
-     * @param string $src        源路径
-     * @param string $dst        复制路径
-     * @param array  $filterDir  过滤文件夹
-     * @param array  $filterFile 过滤文件
+     * @param string  $src        源路径
+     * @param string  $dst        复制路径
+     * @param array   $filterDir  过滤文件夹
+     * @param array   $filterFile 过滤文件
+     * @param boolean $isUnlink   是否删除
      *
      * @author lengbin(lengbin0@gmail.com)
      */
-    public static function copyDir($src, $dst, array $filterDir = [], array $filterFile = [])
+    public static function copyDir($src, $dst, array $filterDir = [], array $filterFile = [], $isUnlink = false)
     {
         $dir = opendir($src);
         self::pathExists($dst);
         while (false !== ($file = readdir($dir))) {
             if (($file !== '.') && ($file !== '..') && !in_array($file, $filterDir)) {
                 if (is_dir($src . "/" . $file)) {
-                    self::copyDir($src . "/" . $file, $dst . "/" . $file);
+                    self::copyDir($src . "/" . $file, $dst . "/" . $file, $filterDir, $filterFile, $isUnlink);
                 } else {
                     if (!in_array($file, $filterFile)) {
                         @copy($src . "/" . $file, $dst . "/" . $file);
+                        if($isUnlink){
+                            @unlink($src . "/" . $file);
+                        }
                     }
                 }
             }

@@ -34,12 +34,18 @@ class ReadDirHelper
     private $_targetDir = [];
     //是否输出全路径文件名称
     private $_isNamespace = false;
+    //命名空间
+    private $_namespace;
     // 过路目录
     private $_filterDirs = [];
     // 过滤文件
     private $_filterFiles = [];
     // 文件
     private $_files = [];
+    // 文件夹
+    private $_dirs = [];
+    // 是否读取当前目录
+    private $_isReadCurrentDir = false;
 
     public function __construct($rootDir)
     {
@@ -71,6 +77,27 @@ class ReadDirHelper
     }
 
     /**
+     * 设置   命名空间
+     *
+     * @param $namespace
+     */
+    public function setNamespace($namespace)
+    {
+        $this->_namespace = $namespace;
+    }
+
+    /**
+     * 设置   是否读取当前目录
+     * 默认为 全目录
+     *
+     * @param $isReadCurrentDir
+     */
+    public function setIsReadCurrentDir($isReadCurrentDir)
+    {
+        $this->_isReadCurrentDir = $isReadCurrentDir;
+    }
+
+    /**
      * 设置 过滤目录
      *
      * @param array $filterDirs
@@ -91,30 +118,29 @@ class ReadDirHelper
     }
 
     /**
-     * 读取文件
+     * 读取文件夹, 获取文件名称
      *
      * @param $dir
      */
-    private function _readDir($dir)
+    private function _getFileNames($dir)
     {
         $handle = opendir($dir);
         while (($fileName = readdir($handle)) !== false) {
             // 过滤 过滤目录， 过滤文件
             if ($fileName !== '.' && $fileName !== '..' && !in_array($fileName, $this->_filterDirs)) {
                 $path = $dir . '/' . $fileName;
-                if (is_dir($path)) {
-                    $this->_readDir($path);
+                if (is_dir($path) && !$this->_isReadCurrentDir) {
+                    $this->_getFileNames($path);
                 } else {
                     if (is_file($path) && !in_array($fileName, $this->_filterFiles)) {
                         if ($this->_isNamespace) {
-                            $obj = new $fileName;
-                            $reflection = new \ReflectionClass($obj);
-                            $path = $reflection->getNamespaceName();
-                            if (empty($path)) {
-                                $pathInfo = pathinfo($path);
+                            $pathInfo = pathinfo($path);
+                            if (!$this->_namespace) {
                                 $filePath = substr($pathInfo['dirname'], strpos($pathInfo['dirname'], $this->_rootDirName));
                                 $filePath = $filePath . '/' . $pathInfo['filename'];
                                 $path = str_replace('/', '\\', $filePath);
+                            } else {
+                                $path = $this->_namespace . '\\' . $pathInfo['filename'];
                             }
                         }
                         // 是否存在 目标目录， 当前目录是否在目标目录中， 如果没有 continue
@@ -135,7 +161,44 @@ class ReadDirHelper
     public function getFileNames()
     {
         $this->_rootDirName = $this->_isNamespace ? basename($this->_rootDir) : $this->_rootDir;
-        $this->_readDir($this->_rootDir);
+        $this->_getFileNames($this->_rootDir);
         return $this->_files;
+    }
+
+    /**
+     * 读取文件夹, 获取文件名称
+     *
+     * @param $dir
+     */
+    private function _getDirNames($dir)
+    {
+        $handle = opendir($dir);
+        while (($fileName = readdir($handle)) !== false) {
+            // 过滤 过滤目录， 过滤文件
+            if ($fileName !== '.' && $fileName !== '..' && !in_array($fileName, $this->_filterDirs)) {
+                $path = $dir . '/' . $fileName;
+                if (is_dir($path)) {
+                    $this->_dirs[$path] = $path;
+                    if ($this->_isReadCurrentDir) {
+                        $rootCount = count(explode('/', $this->_rootDir));
+                        $pathCount = count(explode('/', $path));
+                        if ($pathCount - $rootCount != 1) {
+                            unset($this->_dirs[$path]);
+                        }
+                    }
+                    $this->_getDirNames($path);
+                }
+            }
+        }
+    }
+
+    /**
+     * 获得 文件夹名称
+     * @return array
+     */
+    public function getDirNames()
+    {
+        $this->_getDirNames($this->_rootDir);
+        return $this->_dirs;
     }
 }

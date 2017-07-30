@@ -23,6 +23,7 @@ class DemoTask implements CrontabTaskInterface
     {
         // TODO: Implement task() method.
         // 需要执行的 code
+        echo 1;
     }
 
     /**
@@ -34,11 +35,12 @@ class DemoTask implements CrontabTaskInterface
     {
         // 如果不执行， 请返回false
         // 如果 执行， 请返回时间戳
-        return 1 * 60;
+//        return 1 * 60;
+        return false;
     }
 
     /**
-     * 执行时间， 定时， 单位时间戳
+     * 执行时间， 定时， 小时的倍数
      * @return mixed
      * @author lengbin(lengbin0@gmail.com)
      */
@@ -46,6 +48,7 @@ class DemoTask implements CrontabTaskInterface
     {
         // 如果不执行， 请返回false
         // 如果 执行， 请返回时间戳
-        return false;
+        // 每天 1 点 执行  -> 01000
+        return 100000;
     }
 }

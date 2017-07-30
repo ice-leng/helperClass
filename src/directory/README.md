@@ -23,10 +23,14 @@
      $readDir = new \lengbin\helper\directory\ReadDirHelper($rootDir);
      // 是否需要返回为空间名称
      $readDir->setIsNamespace(true);
+     $readDir->setNamespace('xxxxx');
      $readDir->setTargetDir($dirName);
      $readDir->setFilterDirs(['common']);
+     // 是否当前目录
+     $readDir->setIsReadCurrentDir(true);
      return $readDir->getFileNames();
-     
+     // 目录名称
+     $readDir->getDirNames();
      
      /**
       * 版本自动更新

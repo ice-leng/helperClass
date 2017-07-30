@@ -116,7 +116,7 @@ class UpdateFileHelper
      *
      * @author lengbin(lengbin0@gmail.com)
      */
-    public function __construct($src = '', $dst = '')
+    public function __construct($src, $dst)
     {
         $this->_upgradeDir = $src;
         $this->_updateDir = $dst;
@@ -247,12 +247,14 @@ class UpdateFileHelper
         $dirNames = [];
         if (is_dir($this->_upgradeDir)) {
             $readDir = new ReadDirHelper($this->_upgradeDir);
-            $dirNames = $readDir->getFileNames();
+            $readDir->setIsReadCurrentDir(true);
+            $dirNames = $readDir->getDirNames();
         }
         $data = [];
         foreach ($dirNames as $dirName) {
-            $newVersion = str_pad($dirName, 14, 0);
-            $data[$newVersion] = $dirName;
+            $pathInfo = pathinfo($dirName);
+            $newVersion = str_pad($pathInfo['basename'], 14, 0);
+            $data[$newVersion] = $newVersion;
         }
         ksort($data);
         return array_pop($data);
@@ -288,7 +290,7 @@ class UpdateFileHelper
         $data = [];
         if (is_file($this->_versionLog)) {
             $contents = FileHelper::readFileLastContent($this->_versionLog, 10);
-            if (empty($contents)) {
+            if (!$contents[0]) {
                 return '';
             }
             foreach ($contents as $content) {
@@ -326,7 +328,7 @@ class UpdateFileHelper
      */
     protected function checkVersionDir()
     {
-        $this->_versionLog = $this->_upgradeDir . 'version.log';
+        $this->_versionLog = $this->_upgradeDir . DIRECTORY_SEPARATOR . 'version.log';
         if (!is_file($this->_versionLog)) {
             FileHelper::putFile($this->_versionLog, '');
         }
@@ -335,8 +337,12 @@ class UpdateFileHelper
         if ($currentVersion >= $this->_version && $this->_isUpdate) {
             throw new \Exception("没有找到最新版本，当前版本为【{$currentVersion}】\r\n");
         } else {
-            echo "check...发现当前版本为【{$currentVersion}】\r\n";
-            echo "check...发现最新版本为【{$this->_version}】\r\n";
+            if($this->_upgradeType === self::UPGRADE_COMPARE){
+                echo "check...最新版本【{$this->_version}】\r\n";
+            }else{
+                echo "check...发现当前版本为【{$currentVersion}】\r\n";
+                echo "check...发现最新版本为【{$this->_version}】\r\n";
+            }
         }
     }
 
@@ -439,6 +445,7 @@ class UpdateFileHelper
 
     /**
      * 执行sql
+     * 继承后 重构
      *
      * @param string $file
      *
@@ -486,9 +493,9 @@ class UpdateFileHelper
      */
     protected function codeProcess()
     {
-        $codeDir = $this->_upgradeDir . DIRECTORY_SEPARATOR . $this->_upgradeCodeDirName;
+        $codeDir = $this->_upgradeDir . DIRECTORY_SEPARATOR . $this->_version . DIRECTORY_SEPARATOR . $this->_upgradeCodeDirName;
         $this->checkDir($codeDir);
-        $compareDir = $this->_upgradeDir . DIRECTORY_SEPARATOR . $this->_upgradeTypeCompare;
+        $compareDir = $this->_upgradeDir . DIRECTORY_SEPARATOR . $this->_version . DIRECTORY_SEPARATOR  . $this->_upgradeTypeCompare;
         DirHelper::pathExists($compareDir);
         if ($this->_upgradeType === self::UPGRADE_UPDATE || !$this->_isUpdate) {
             DirHelper::emptyDir($compareDir);
@@ -499,6 +506,7 @@ class UpdateFileHelper
             return;
         }
         // update file
+        $codeDir = $this->_upgradeType === self::UPGRADE_UPDATE ? $codeDir : $compareDir;
         DirHelper::copyDir($codeDir, $this->_updateDir);
     }
 

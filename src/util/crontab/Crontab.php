@@ -32,9 +32,11 @@ class Crontab extends ObjectHelper
     CONST LOCK = 'lock';
 
     private $_taskDir;
+    private $_time;
 
     public function __construct()
     {
+        $this->_time = time();
         $taskDir = __DIR__ . '/task';
         $this->setTaskDir($taskDir);
     }
@@ -65,6 +67,7 @@ class Crontab extends ObjectHelper
         }
         $read = new ReadDirHelper($this->_taskDir);
         $read->setIsNamespace(true);
+        $read->setNamespace('\lengbin\helper\util\Crontab\task');
         return $read->getFileNames();
     }
 
@@ -133,13 +136,38 @@ class Crontab extends ObjectHelper
      * @return mixed
      * @author lengbin(lengbin0@gmail.com)
      */
-    protected function check($taskName, $time)
+    protected function checkTime($taskName, $time)
     {
         if (!$time) {
             return $time;
         }
         $t = $this->getCache($taskName);
-        return time() >= $t ? true : false;
+        return time() >= $t;
+    }
+
+    /**
+     * 检查是否到达执行时间
+     *
+     * @param string $taskName
+     * @param int    $date
+     *
+     * @return mixed
+     * @author lengbin(lengbin0@gmail.com)
+     */
+    protected function checkDate($taskName, $date)
+    {
+        if (!$date) {
+            return $date;
+        }
+        $t = $this->getCache($taskName);
+        if($t){
+            $sysDate = (int)date('YmdHis', $this->_time);
+            $taskDate = (int)$t;
+        }else{
+            $sysDate = (int)date('His', $this->_time);
+            $taskDate = (int)$date;
+        }
+        return $sysDate >= $taskDate;
     }
 
     /**
@@ -160,19 +188,21 @@ class Crontab extends ObjectHelper
             if (!$class instanceof CrontabTaskInterface) {
                 continue;
             }
+            $reflection = new \ReflectionClass($class);
+            $name = $reflection->getShortName();
             $time = $class->time();
             $date = $class->date();
             if (!$time && !$date) {
-                $this->setCache($task, "class {$task} not set time, check code", true);
+                $this->setCache($name, "class {$name} not set time, check code", true);
                 continue;
             }
-            if ($this->check($task, $time) || $this->check($task, $date)) {
-                $t = time() + ( $date ? 86400 : $time );
+            if ($this->checkTime($name, $time) || $this->checkDate($name, $date)) {
+                $t =  $date ? (int)date('Ymd000000', strtotime(' +1 d ') ) + $date : $this->_time + $time ;
                 try{
                     $class->task();
-                    $this->setCache($task, $t);
+                    $this->setCache($name, $t);
                 }catch (\Exception $e){
-                    $this->setCache($task, $e->getMessage(), true);
+                    $this->setCache($name, $e->getMessage(), true);
                 }
             }
         }
