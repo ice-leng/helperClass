@@ -12,9 +12,10 @@ namespace lengbin\helper\math;
 class MathHelper
 {
     /**
-     * 等比差排列累加
+     * 等比列累加(22元素相加排列)
      *
-     * @param array $arr 需要排列求和数据  array $arr [1, 2, 3, 4]
+     * @param array   $arr   需要排列求和数据
+     * @param boolean $isLog 是否展示log
      *
      * @return array [
      *                  'resetData' => [1,2,3]//去重后的 等比差排列
@@ -22,45 +23,59 @@ class MathHelper
      *              ]
      * @author lengbin(lengbin0@gmail.com)
      */
-    public static function equalToTheDifferenceAccumulate(array $arr)
+    public static function addTOArrange(array $arr, $isLog = false)
     {
         // 等比差排列累加数据
+        $log = [];
         $length = count($arr);
-        $result[1][$length] = $arr;
+        $arrangementClassRoomSeatData[1][$length] = $arr;
+        if ($isLog) {
+            $log[1][$length] = array_keys($arr);
+        }
         for ($time = $length; $time >= 1; --$time) {
-            $count = count($result);
+            $count = count($arrangementClassRoomSeatData);
             $start = $len = ($time - 1);
             $level = $count + 1;
             $j = -1;
             $k = 0;
             for ($l = $start; $l >= 1; --$l) {
                 $j++;
-                if ($j != 0 && $level != 2) {
-                    if ($k == 0) {
+                if ($j !== 0 && $level !== 2) {
+                    if ($k === 0) {
                         $k = $len + 1;
                     } else {
                         $k += ($len + 2 - $j);
                     }
                 }
                 for ($i = 1; $i <= $l; $i++) {
-                    if ($level != 2) {
-                        $oneValue = $result[($level - 1)][$len + 1][$k];
+                    if ($level !== 2) {
+                        $oneValue = $arrangementClassRoomSeatData[$level - 1][$len + 1][$k];
                     } else {
                         $oneValue = $arr[$j];
                     }
-                    $result[$level][$len][] = $oneValue + $arr[($i + $level + $j - 2)];
+                    $arrangementClassRoomSeatData[$level][$len][] = $oneValue + $arr[($i + $level + $j - 2)];
+                    if ($isLog) {
+                        $log[$level][$len][] = [
+                            $level !== 2 ? $log[$level - 1][$len + 1][$k] : $j,
+                            $i + $level + $j - 2,
+                        ];
+                    }
                 }
             }
         }
         $resetData = [];
-        foreach ($result as $data) {
+        foreach ($arrangementClassRoomSeatData as $data) {
             $resetData = array_merge($resetData, array_shift($data));
         }
         $resetData = array_unique($resetData);
-        return [
+        $d = [
             'resetData' => $resetData,
-            'data'      => $result,
+            'data'      => $arrangementClassRoomSeatData,
         ];
+        if ($isLog) {
+            $d['log'] = $log;
+        }
+        return $d;
     }
 
     /**
@@ -180,21 +195,21 @@ class MathHelper
             $k = 0;
             for ($l = $start; $l >= 1; --$l) {
                 $j++;
-                if ($j != 0 && $level != 2) {
-                    if ($k == 0) {
+                if ($j !== 0 && $level !== 2) {
+                    if ($k === 0) {
                         $k = $len + 1;
                     } else {
                         $k += ($len + 2 - $j);
                     }
                 }
                 for ($i = 1; $i <= $l; $i++) {
-                    if ($level != 2) {
-                        $oneValue = $data[($level - 1)][$len + 1][$k];
+                    if ($level !== 2) {
+                        $oneValue = $data[$level - 1][$len + 1][$k];
                     } else {
                         $oneValue = $arr[$j];
                     }
                     if (is_array($oneValue)) {
-                        $data[$level][$len][] = array_merge($oneValue, [$arr[($i + $level + $j - 2)]]);
+                        $data[$level][$len][] = array_merge($oneValue, [$arr[$i + $level + $j - 2]]);
                     } else {
                         $data[$level][$len][] = [$oneValue, $arr[($i + $level + $j - 2)]];
                     }

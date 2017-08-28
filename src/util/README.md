@@ -59,4 +59,17 @@
           */
          public function date();
     
+    
+    
+    
+        /***
+        ** 模版替换  
+        ** 
+        */
+         $content = (new Template($this->phpFile))
+                    ->place('before', 1)
+                    ->place('case',2 )
+                    ->produce();
+    
+    
 ```
