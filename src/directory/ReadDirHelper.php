@@ -37,7 +37,7 @@ class ReadDirHelper
     //命名空间
     private $_namespace;
     // 过路目录
-    private $_filterDirs = [];
+    private $_filterDirs = [['.idea', '.svn', '.git']];
     // 过滤文件
     private $_filterFiles = [];
     // 文件
