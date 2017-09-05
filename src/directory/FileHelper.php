@@ -128,7 +128,7 @@ class FileHelper
      * @return string
      * @author lengbin(lengbin0@gmail.com)
      */
-    public function download($name, $url)
+    public static function download($name, $url)
     {
         $suffix = FileHelper::getExtension($url);
         $info = getimagesize($url);
