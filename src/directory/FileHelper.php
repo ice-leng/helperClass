@@ -125,6 +125,7 @@ class FileHelper
      * @param string $name 文件名称
      * @param string $url  网络路径
      *
+     * @return string
      * @author lengbin(lengbin0@gmail.com)
      */
     public function download($name, $url)
@@ -146,6 +147,7 @@ class FileHelper
         }
         $file = $name . '.' . $suffix;
         FileHelper::putFile($file, FileHelper::getFile($url));
+        return $file;
     }
 
 }
