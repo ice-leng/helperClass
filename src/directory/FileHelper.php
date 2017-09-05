@@ -119,4 +119,33 @@ class FileHelper
         return $lines;
     }
 
+    /**
+     * 下载文件
+     *
+     * @param string $name 文件名称
+     * @param string $url  网络路径
+     *
+     * @author lengbin(lengbin0@gmail.com)
+     */
+    public function download($name, $url)
+    {
+        $suffix = FileHelper::getExtension($url);
+        $info = getimagesize($url);
+        if ($info) {
+            switch ($info[2]) {
+                case 1:
+                    $suffix = 'gif';
+                    break;
+                case 2:
+                    $suffix = 'jpg';
+                    break;
+                case 3:
+                    $suffix = 'png';
+                    break;
+            }
+        }
+        $file = $name . '.' . $suffix;
+        FileHelper::putFile($file, FileHelper::getFile($url));
+    }
+
 }

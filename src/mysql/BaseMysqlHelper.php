@@ -95,7 +95,7 @@ class BaseMysqlHelper
     public static function getInstance($host = '', $database = '', $user = '', $pass = '')
     {
         $s = $host . "_" . $database . "_" . $user;
-        if ($s == "__") {
+        if ($s === "__") {
             $s = self::$oldInstance;
         } else {
             self::$oldInstance = $s;
@@ -204,7 +204,7 @@ class BaseMysqlHelper
             if (count($is) < 2) {
                 $name = ':' . $name;
             }
-            if ($rule == 'like') {
+            if ($rule === 'like') {
                 if (isset($params[$name]) && !empty($params[$name])) {
                     $params[$name] = '%%' . $params[$name] . '%%';
                 }
@@ -226,7 +226,7 @@ class BaseMysqlHelper
      */
     public function count($sql, array $params = [], array $rule = [], $countSql = "")
     {
-        if ($countSql == "") {
+        if ($countSql === "") {
             $pattern = "/^SELECT(.*)FROM/i";
             $replace = "SELECT COUNT(*) AS count FROM";
             $sql = preg_replace($pattern, $replace, $sql);
@@ -251,8 +251,8 @@ class BaseMysqlHelper
     public function page($sql, array $params = [], array $rule = [], $pageSize = 10)
     {
         $start = 0;
-        if (isset($_GET['page']) && intval($_GET['page']) > 1 ) {
-            $page = intval($_GET['page']);
+        if (isset($_GET['page']) && (int)$_GET['page'] > 1) {
+            $page = (int)$_GET['page'];
             $start = ($page - 1) * $pageSize;
         }
         $sql .= " LIMIT $start," . $pageSize;
@@ -293,10 +293,10 @@ class BaseMysqlHelper
      */
     public function batchInsert($tableName, array $fields, array $params)
     {
-        $filed = join('`, `', $fields);
+        $filed = implode('`, `', $fields);
         $sql = 'INSERT INTO ' . $tableName . ' (`' . $filed . '`) VALUES ';
         foreach ($params as $param) {
-            $p = join('", "', $param);
+            $p = implode('", "', $param);
             $sql .= ' ("' . $p . '"), ';
         }
         $sql = substr($sql, 0, -2);
@@ -315,10 +315,10 @@ class BaseMysqlHelper
      */
     public function batchUpdate($tableName, array $fields, array $params)
     {
-        $filed = join('`, `', $fields);
+        $filed = implode('`, `', $fields);
         $sql = 'INSERT INTO ' . $tableName . ' (`' . $filed . '`) VALUES ';
         foreach ($params as $param) {
-            $p = join('", "', $param);
+            $p = implode('", "', $param);
             $sql .= ' ("' . $p . '"), ';
         }
         $sql = substr($sql, 0, -2);
@@ -328,5 +328,15 @@ class BaseMysqlHelper
         }
         $sql = substr($sql, 0, -2);
         return self::$instance[$this->instanceName]->execute($sql);
+    }
+
+    /**
+     * 获得上一次添加的id
+     * @return mixed
+     * @author lengbin(lengbin0@gmail.com)
+     */
+    public function getLastInsertId()
+    {
+        return self::$instanceLink[$this->instanceName]->lastInsertId();
     }
 }

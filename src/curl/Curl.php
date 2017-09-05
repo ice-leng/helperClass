@@ -7,13 +7,18 @@
 
 namespace lengbin\helper\curl;
 
+use lengbin\helper\directory\DirHelper;
+use lengbin\helper\directory\FileHelper;
+
 class Curl
 {
-    public  $isShowLog = false;
+    public $isShowLog = false;
     private $_ch;
     private $_loginUrl;
     private $_loginData;
     private $_proxy = [];
+    private $_isAjax;
+    private $_method;
 
     /**
      * 设置/获得 cookie 文件 路径， 适用于免登陆
@@ -22,42 +27,49 @@ class Curl
      */
     public function getCookieFile()
     {
-        $cookieJar = dirname(__DIR__) . '/cookie.tmp';
-        $this->_login($cookieJar);
+        $data = json_encode($this->_loginData);
+        $cookieJar = __DIR__ . '/cookie/cookie.tmp';
+        $this->_login($cookieJar, $this->_isAjax);
         return $cookieJar;
     }
 
     /**
      * 登陆信息
      *
-     * @param string $url   登陆 url
-     * @param        string / array $data 登陆参数
+     * @param string  $url   登陆 url
+     * @param string  $method
+     * @param         string / array $data 登陆参数
+     * @param boolean $isAjax
      *
      * @author lengbin(lengbin0@gmail.com)
      */
-    public function login($url, $data)
+    public function login($url, $method = 'get', $data = [], $isAjax = false)
     {
         $this->_loginUrl = $url;
         $this->_loginData = $data;
+        $this->_isAjax = $isAjax;
+        $this->_method = $method;
     }
 
     /**
      * 模拟登陆
      *
-     * @param string $cookieJar cookie 文件 路径
+     * @param string  $cookieJar cookie 文件 路径
+     * @param boolean $isAjax    是否ajax 请求
      *
      * @return string cookie 文件 路径
      * @author lengbin(lengbin0@gmail.com)
      */
-    private function _login($cookieJar)
+    private function _login($cookieJar, $isAjax)
     {
         if (!file_exists($cookieJar)) {
-            file_put_contents($cookieJar, '');
+            FileHelper::putFile($cookieJar, '');
+            DirHelper::chmod($cookieJar, 0777);
         } else {
             return $cookieJar;
         }
         $this->initCurl($cookieJar);
-        $this->_exec($this->_loginUrl, 'post', $this->_loginData);
+        $this->_exec($this->_loginUrl, $this->_method, $this->_loginData, $isAjax);
         $this->closeCurl();
         return $cookieJar;
     }
@@ -77,6 +89,7 @@ class Curl
 
     /**
      * print log
+     *
      * @param string $msg
      * @param string $log_type
      *
@@ -124,41 +137,52 @@ class Curl
 
     /**
      * 执行
-     * @param string $url
-     * @param string $method
-     * @param string /array   $data
+     *
+     * @param string  $url
+     * @param string  $method
+     * @param         string /array   $data
+     * @param boolean $isAjax
      *
      * @return mixed
      * @author lengbin(lengbin0@gmail.com)
      */
-    private function _exec($url, $method = 'get', $data = null)
+    private function _exec($url, $method = 'get', $data = null, $isAjax = false)
     {
         curl_setopt($this->_ch, CURLOPT_URL, $url);
         curl_setopt($this->_ch, CURLOPT_FOLLOWLOCATION, 1);
-        if ('POST' == strtoupper($method)) {
+        if ('POST' === strtoupper($method)) {
             curl_setopt($this->_ch, CURLOPT_POST, 1);
             if (is_array($data)) {
                 $data = http_build_query($data);
             }
             curl_setopt($this->_ch, CURLOPT_POSTFIELDS, $data);
         }
+        if ($isAjax) {
+            $header = [
+                'X-Requested-With:XMLHttpRequest',
+            ];
+            curl_setopt($this->_ch, CURLOPT_HTTPHEADER, $header);
+        }
         if ($this->isShowLog) {
             $msg = '--url：' . $url . '--method：' . $method . '--params：' . $data;
             $this->_showLog($msg);
         }
+
         return curl_exec($this->_ch);
     }
 
     /**
      * 抓取页面
-     * @param string $url
-     * @param string $method
-     * @param string /array $data
+     *
+     * @param string  $url
+     * @param string  $method
+     * @param         string /array $data
+     * @param boolean $isAjax
      *
      * @return mixed
      * @author lengbin(lengbin0@gmail.com)
      */
-    public function getHtml($url, $method = 'get', $data = '')
+    public function getHtml($url, $method = 'get', $data = '', $isAjax = false)
     {
         try {
             $cookieJar = $this->getCookieFile();
@@ -167,7 +191,7 @@ class Curl
             $this->_showLog($e->getMessage(), 'error');
             $this->closeCurl();
         }
-        return $this->_exec($url, $method, $data = '');
+        return $this->_exec($url, $method, $data, $isAjax);
     }
 
     /**
