@@ -296,6 +296,7 @@ class BaseMysqlHelper
         $filed = implode('`, `', $fields);
         $sql = 'INSERT INTO ' . $tableName . ' (`' . $filed . '`) VALUES ';
         foreach ($params as $param) {
+            $param = str_replace('"',"'", $param);
             $p = implode('", "', $param);
             $sql .= ' ("' . $p . '"), ';
         }
@@ -318,6 +319,7 @@ class BaseMysqlHelper
         $filed = implode('`, `', $fields);
         $sql = 'INSERT INTO ' . $tableName . ' (`' . $filed . '`) VALUES ';
         foreach ($params as $param) {
+            $param = str_replace('"',"'", $param);
             $p = implode('", "', $param);
             $sql .= ' ("' . $p . '"), ';
         }
