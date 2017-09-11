@@ -45,7 +45,7 @@ class PdoMysqlHelper extends BaseMysqlHelper implements MysqlHelperInterface
      */
     public function close()
     {
-        if (self::$instanceLink[$this->instanceName]) {
+        if (isset(self::$instanceLink[$this->instanceName]) && !empty(self::$instanceLink[$this->instanceName])) {
             self::$instanceLink[$this->instanceName] = null;
         }
     }
