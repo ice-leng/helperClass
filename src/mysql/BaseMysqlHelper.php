@@ -251,12 +251,22 @@ class BaseMysqlHelper
     public function page($sql, array $params = [], array $rule = [], $pageSize = 10)
     {
         $start = 0;
+        $page = 1;
         if (isset($_GET['page']) && (int)$_GET['page'] > 1) {
             $page = (int)$_GET['page'];
             $start = ($page - 1) * $pageSize;
         }
+        $totalCount = $this->count($sql, $params, $rule);
         $sql .= " LIMIT $start," . $pageSize;
-        return self::$instance[$this->instanceName]->all($sql, $params, $rule);
+        $data = self::$instance[$this->instanceName]->all($sql, $params, $rule);
+        $totalPage = ceil($totalCount / $pageSize);
+        return [
+            'list'        => $data,
+            'currentPage' => $page,
+            'pageSize'    => $pageSize,
+            'totalPage'   => $totalPage,
+            'totalCount'  => $totalCount,
+        ];
     }
 
     /**
@@ -296,7 +306,7 @@ class BaseMysqlHelper
         $filed = implode('`, `', $fields);
         $sql = 'INSERT INTO ' . $tableName . ' (`' . $filed . '`) VALUES ';
         foreach ($params as $param) {
-            $param = str_replace('"',"'", $param);
+            $param = str_replace('"', "'", $param);
             $p = implode('", "', $param);
             $sql .= ' ("' . $p . '"), ';
         }
@@ -319,7 +329,7 @@ class BaseMysqlHelper
         $filed = implode('`, `', $fields);
         $sql = 'INSERT INTO ' . $tableName . ' (`' . $filed . '`) VALUES ';
         foreach ($params as $param) {
-            $param = str_replace('"',"'", $param);
+            $param = str_replace('"', "'", $param);
             $p = implode('", "', $param);
             $sql .= ' ("' . $p . '"), ';
         }
