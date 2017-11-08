@@ -172,7 +172,7 @@ class ZipHelper
      */
     protected function checkUrl($url)
     {
-        $rule = '/^(([a-zA-Z]+)(:\/\/))?([a-zA-Z]+)\.(\w+)\.([\w.]+)(\/([\w]+)\/?)*(\/[a-zA-Z0-9]+\.(\w+))*(\/([\w]+)\/?)*(\?(\w+=?[\w]*))*((&?\w+=?[\w]*))*$/';
+        $rule = "/((http|https):\/\/)?\w+\.(jpg|jpeg|gif|png)/";
         preg_match($rule,$url,$result);
         return $result;
     }

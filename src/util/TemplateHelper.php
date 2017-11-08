@@ -1,5 +1,5 @@
 <?php
-namespace Codeception\Util;
+namespace lengbin\helper\util;
 
 /**
  * Basic template engine used for generating initial Cept/Cest/Test files.

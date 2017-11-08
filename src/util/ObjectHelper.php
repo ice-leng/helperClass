@@ -116,7 +116,7 @@ class ObjectHelper
      *
      * @author lengbin(lengbin0@gmail.com)
      */
-    public function setAttributes(array $params)
+    protected function setAttributes(array $params)
     {
         foreach ($params as $name => $value) {
             $this->_setData($name, $value);
@@ -129,7 +129,7 @@ class ObjectHelper
      * @return array
      * @author lengbin(lengbin0@gmail.com)
      */
-    public function getAttributes()
+    protected function getAttributes()
     {
         return $this->data;
     }
@@ -141,48 +141,12 @@ class ObjectHelper
      *
      * @author lengbin(lengbin0@gmail.com)
      */
-    public function remove($name)
+    protected function remove($name)
     {
         $data = $this->_getData($name);
         if (!empty($data)) {
             unset($this->data[$name]);
         }
     }
-
-    /**
-     * 验证请求参数字段
-     * 支持别名
-     *
-     * @param array        $requests      请求参数  $_GET / $_POST
-     * @param array        $validateField 验证字段，支持别名  ['别名' => 字段， 0 => 字段]
-     * @param string/array $default       字段默认值 支持自定义 [字段 => 值]
-     *
-     * @return array
-     * @author lengbin(lengbin0@gmail.com)
-     */
-    public function validateRequestParams($requests, $validateField, $default = '')
-    {
-        $data = [];
-        foreach ($validateField as $key => $field) {
-            $param = (isset($requests[$field]) && !empty($requests[$field])) ? $requests[$field] : null;
-            if (!empty($default) && $param === null) {
-                if (is_array($default)) {
-                    $param = (isset($default[$field]) && !empty($default[$field])) ? $default[$field] : null;
-                } else {
-                    $param = $default;
-                }
-            }
-            if($default === [] && $param === null){
-                $param = [];
-            }
-            if (is_int($key)) {
-                $data[$field] = $param;
-            } else {
-                $data[$key] = $param;
-            }
-        }
-        return $data;
-    }
-
 
 }
