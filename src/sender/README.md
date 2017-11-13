@@ -75,5 +75,11 @@
     ], $content);
 
     来自： https://github.com/slince/smartqq
+    
+    composer.json "slince/smartqq": "^2.0"
+    
+    composer require slince/smartqq
+    
+
         
 ```
