@@ -39,6 +39,7 @@
      ], $content);
      var_dump($status);
      
+     composer require swiftmailer/swiftmailer
      来自：https://github.com/swiftmailer/swiftmailer
          
  ```
