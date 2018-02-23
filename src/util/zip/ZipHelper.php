@@ -49,6 +49,10 @@ class ZipHelper
     private $_filterFiles = [];
     private $_path;
 
+    /**
+     * ZipHelper constructor.
+     * @throws \Exception
+     */
     public function __construct()
     {
         if (!extension_loaded('zip')) {
@@ -172,7 +176,7 @@ class ZipHelper
      */
     protected function checkUrl($url)
     {
-        $rule = "/((http|https):\/\/)?\w+\.(jpg|jpeg|gif|png)/";
+		$rule = "/(http:|https:){1}(//){1}((?!\").)*?.(jpg|jpeg|gif|png)/";
         preg_match($rule,$url,$result);
         return $result;
     }
