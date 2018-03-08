@@ -3,7 +3,6 @@
     "description": "this is my collection helper class",
     "license": "MIT",
     "require": {
-        "phpoffice/phpexcel": "^1.8",
         "php": ">=5.3.0"
     },
 

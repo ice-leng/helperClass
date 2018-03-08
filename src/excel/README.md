@@ -2,6 +2,10 @@
 
 ## 导入
 ```php
+    composer request 
+    "phpoffice/phpexcel": "^1.8",
+    或者
+    composer require phpoffice/phpexcel
 /***
  * Class BaseImport
  *

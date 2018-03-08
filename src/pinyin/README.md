@@ -2,6 +2,14 @@
 
 ```php
 
+注意 此扩展有适配率低 请换
+
+https://gitee.com/yurunsoft/ChineseUtil
+
+"yurunsoft/chinese-util": "^1.0"
+或者
+composer require yurunsoft/chinese-util
+
 主要功能：
 --转全拼音
 --转首字母

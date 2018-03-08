@@ -20,7 +20,7 @@ namespace lengbin\helper\mysql;
 class MysqlHelper extends BaseMysqlHelper implements MysqlHelperInterface
 {
 
-    public function __construct($host, $database, $user, $password)
+    public function __construct($host = '', $database = '', $user = '', $password = '')
     {
         parent::__construct($host, $database, $user, $password);
     }
@@ -36,11 +36,12 @@ class MysqlHelper extends BaseMysqlHelper implements MysqlHelperInterface
      * @return mixed
      * @author lengbin(lengbin0@gmail.com)
      */
-    public function connect($host, $database, $user, $password)
+    public function connect($host = '', $database = '', $user = '', $password = '')
     {
         if (!isset(self::$instanceLink[$this->instanceName])) {
-            self::$instanceLink[$this->instanceName] = mysql_connect($host, $user, $password, null, 65536 | 131072) or die('Could not connect: ' . mysql_error());
-            mysql_select_db($database, self::$instanceLink[$this->instanceName]) or die('Could not select database');
+            $this->init($host, $database, $user, $password);
+            self::$instanceLink[$this->instanceName] = mysql_connect($this->host, $this->user, $this->pass, null, 65536 | 131072) or die('Could not connect: ' . mysql_error());
+            mysql_select_db($this->database, self::$instanceLink[$this->instanceName]) or die('Could not select database');
             $this->execute(sprintf("SET NAMES '%s'", $this->charset));
         }
         return $this;

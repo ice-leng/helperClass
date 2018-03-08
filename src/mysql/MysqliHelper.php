@@ -23,17 +23,17 @@ class MysqliHelper extends BaseMysqlHelper implements MysqlHelperInterface
      * @return mixed
      * @author lengbin(lengbin0@gmail.com)
      */
-    public function connect($host, $database, $user, $password)
+    public function connect($host = '', $database = '', $user = '', $password = '')
     {
         if (!isset(self::$instanceLink[$this->instanceName])) {
-            $con = new \mysqli($host, $user, $password);
+            $this->init($host, $database, $user, $password);
+            $con = new \mysqli($this->host, $this->user, $this->pass);
             if (!$con) {
                 die("Connection failed: " . mysqli_connect_error());
             }
-            $this->init($host, $database, $user, $password);
             self::$instance[$this->instanceName] = $this;
             self::$instanceLink[$this->instanceName] = $con;
-            $con->select_db($database) or die('Could not select database');
+            $con->select_db($this->database) or die('Could not select database');
             $this->execute(sprintf("SET NAMES '%s'", $this->charset));
         }
         return $this;

@@ -23,11 +23,12 @@ class PdoMysqlHelper extends BaseMysqlHelper implements MysqlHelperInterface
      * @return mixed
      * @author lengbin(lengbin0@gmail.com)
      */
-    public function connect($host, $database, $user, $password)
+    public function connect($host = '', $database = '', $user = '', $password = '')
     {
         if (!isset(self::$instanceLink[$this->instanceName])) {
             try {
-                $con = new \PDO("mysql:host={$host};dbname={$database}", $user, $password);
+                $this->init($host, $database, $user, $password);
+                $con = new \PDO("mysql:host={$this->host};dbname={$this->database}", $this->user, $this->pass);
                 self::$instance[$this->instanceName] = $this;
                 self::$instanceLink[$this->instanceName] = $con;
                 $this->execute(sprintf("SET NAMES '%s'", $this->charset));
@@ -56,25 +57,16 @@ class PdoMysqlHelper extends BaseMysqlHelper implements MysqlHelperInterface
      * @param string $sql      sql  select * from table where id = :id
      * @param array  $params   参数 [':id' => '1']
      * @param array  $rule     规则  [':name' => 'like'] || ['name' => 'like']
-     * @param bool   $isSelect 是否为查询
      *
      * @return object
      * @author lengbin(lengbin0@gmail.com)
      */
-    private function _exec($sql, array $params = [], array $rule = [], $isSelect = false)
+    private function _exec($sql, array $params = [], array $rule = [])
     {
         $params = $this->getRuleParams($params, $rule);
         parent::query($sql, $params);
         $this->query = self::$instanceLink[$this->instanceName]->prepare($sql);
-        if (!$isSelect) {
-            if (!empty($params)) {
-                foreach ($params as $key => $value) {
-                    $this->query->bindParam($key, $value);
-                }
-            }
-        } else {
-            $this->query->execute($params);
-        }
+        $this->query->execute($params);
         return $this;
     }
 
@@ -85,18 +77,14 @@ class PdoMysqlHelper extends BaseMysqlHelper implements MysqlHelperInterface
      * @param string $sql      sql  select * from table where id = :id
      * @param array  $params   参数 [':id' => '1']
      * @param array  $rule     规则 [':name' => 'like'] || ['name' => 'like']
-     * @param bool   $isSelect 是否为查询
      *
      * @return int
      * @author lengbin(lengbin0@gmail.com)
      */
-    public function execute($sql, array $params = [], array $rule = [], $isSelect = false)
+    public function execute($sql, array $params = [], array $rule = [])
     {
         try {
-            $this->_exec($sql, $params, $rule, $isSelect);
-            if (!$isSelect) {
-                $this->query->execute();
-            }
+            $this->_exec($sql, $params, $rule);
             return $this->query->rowCount();
         } catch (\Exception $e) {
             die("execute failed: " . $e->getMessage());

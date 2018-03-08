@@ -15,7 +15,7 @@ class SwooleServer
 
     public function __construct()
     {
-        $this->_webSocket = new \swoole_websocket_server("192.168.1.112", 9502);
+        $this->_webSocket = new \swoole_websocket_server("127.0.0.1", 9502);
         $this->_webSocket->set([
             'worker_num'    => 8,
             'daemonize'     => false,
@@ -54,9 +54,10 @@ class SwooleServer
     {
         //获得接收数据
         $request = $frame->data;
-        $fd = '1';
-        $string = '1'; // string / json
-        $ws->push($fd, $string);
+        var_dump($request);
+//        $fd = '1';
+//        $string = '1'; // string / json
+//        $ws->push($fd, $string);
     }
 
     /**
@@ -69,9 +70,9 @@ class SwooleServer
     public function onWorkerStart($ws, $worker_id)
     {
         $ws->tick(1000, function () use ($ws) {
-            $fd = '1';
-            $string = '1'; // string / json
-            $ws->push($fd, $string);
+//            $fd = '1';
+//            $string = '1'; // string / json
+//            $ws->push($fd, $string);
         });
     }
 
@@ -87,3 +88,5 @@ class SwooleServer
         echo "Client {$fd} close connection\n";
     }
 }
+
+new SwooleServer();

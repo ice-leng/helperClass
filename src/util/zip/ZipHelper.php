@@ -176,7 +176,7 @@ class ZipHelper
      */
     protected function checkUrl($url)
     {
-		$rule = "/(http:|https:){1}(//){1}((?!\").)*?.(jpg|jpeg|gif|png)/";
+        $rule = "/((http|https):\/\/)?\w+\.(jpg|jpeg|gif|png)/";
         preg_match($rule,$url,$result);
         return $result;
     }

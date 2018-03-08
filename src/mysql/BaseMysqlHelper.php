@@ -38,11 +38,11 @@ class BaseMysqlHelper
      */
     protected function init($host = '', $database = '', $user = '', $password = '')
     {
-        $this->host = $host;
-        $this->database = $database;
-        $this->user = $user;
-        $this->pass = $password;
-        $this->instanceName = $host . "_" . $database . "_" . $user;
+        $this->host = $this->host ? $this->host : $host;
+        $this->database = $this->database ? $this->database : $database;
+        $this->user = $this->user ? $this->user : $user;
+        $this->pass = $this->pass ? $this->pass : $password;
+        $this->instanceName = $this->host . "_" . $this->database . "_" . $this->user;
     }
 
     /**
@@ -319,7 +319,7 @@ class BaseMysqlHelper
      *
      * @param string $tableName table name
      * @param array  $fields    need update field  [id, is_delete]
-     * @param array  $params    update data   [1=>1, 2=>1, 3=>1]
+     * @param array  $params    update data   [[1, 1, 1], [2,2,2]]
      *
      * @return mixed
      * @author lengbin(lengbin0@gmail.com)
@@ -350,5 +350,61 @@ class BaseMysqlHelper
     public function getLastInsertId()
     {
         return self::$instanceLink[$this->instanceName]->lastInsertId();
+    }
+
+    /**
+     * query
+     *
+     * @return MysqlQuery
+     * @throws \Exception
+     */
+    public function find()
+    {
+        $query = new MysqlQuery();
+        $query->setDb($this);
+        return $query;
+    }
+
+    /**
+     * 添加
+     *
+     * @param string $tableName
+     * @param array  $data ['id' => 1]
+     *
+     * @return int
+     */
+    public function insert($tableName, array $data)
+    {
+        $params = [];
+        $fields = array_keys($data);
+        $filed = implode('`, `', $fields);
+        $sql = 'INSERT INTO ' . $tableName . ' (`' . $filed . '`) VALUES (';
+        foreach ($data as $n => $d){
+            $name = ':' . $n;
+            $sql .= $name . ', ';
+            $params[$name] = $d;
+        }
+        $sql = substr($sql, 0, strripos($sql, ', '));
+        $sql .= ')';
+        return self::$instance[$this->instanceName]->execute($sql, $params);
+    }
+
+    /**
+     * 更新
+     * 
+     * @param string $tableName
+     * @param array $data   ['name' => 1]
+     * @param array $where  ['id' => 1]
+     *
+     * @return mixed
+     */
+    public function update($tableName, array $data, array $where)
+    {
+        $maker = new MysqlQueryMaker([]);
+        $set = $maker->formatWhere($data, '=', ', ');
+        $set = strtr($set, ['(' => '', ')' => '']);
+        $w = $maker->formatWhere($where);
+        $sql = "UPDATE `{$tableName}` SET " . $set . " WHERE {$w}";
+        return self::$instance[$this->instanceName]->execute($sql, $maker->params());
     }
 }
