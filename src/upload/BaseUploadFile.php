@@ -200,7 +200,13 @@ abstract class BaseUploadFile {
         //用于upyun继承提取公用
         $this->invoke($uniName);
 
-        $res=['path'=>$this->uploadDir.'/'.$uniName,'newName'=>$uniName,'orgName'=>$this->name,'size'=>$this->size,'url'=>\Yii::$app->urlManager->createAbsoluteUrl('uploads/'.date('Y-m-d')) . '/' . $uniName];
+        $res=[
+            'resource'=>$this->uploadDir.'/'.$uniName,
+            'newName'=>$uniName,
+            'orgName'=>$this->name,
+            'size'=>$this->size,
+            'path'=>'/' . date('Y-m-d') . '/' . $uniName
+        ];
         if(isset($this->suffix)){
             $res['suffix']=$this->suffix;
         }

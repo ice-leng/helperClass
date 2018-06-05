@@ -42,18 +42,17 @@ class NumberHelper
     /**
      * 数字随机数
      *
-     * @param int $num 位数
+     * @param int $length 位数
      *
      * @return string
      * @author lengbin(lengbin0@gmail.com)
      */
-    public static function randNum($num = 7)
+    public static function randNum($length = 6)
     {
-        $rand = "";
-        for ($i = 0; $i < $num; $i++) {
-            $rand .= mt_rand(0, 9);
-        }
-        return $rand;
+        $min = pow(10, ($length - 1));
+        $max = pow(10, $length) - 1;
+        $mem = rand($min, $max);
+        return $mem;
     }
 
     /**
@@ -150,6 +149,88 @@ class NumberHelper
         }
         return $retval;
     }
+
+    /**
+     * 时间格式化
+     *
+     * @param      string /int  $date  时间/时间戳
+     * @param bool $isInt 是否为int
+     *
+     * @return array
+     * @author lengbin(lengbin0@gmail.com)
+     */
+    public static function formattingDay($date, $isInt = true)
+    {
+        return self::formattingDays($date, $date, $isInt);
+    }
+
+    /**
+     * 双日期 格式化
+     *
+     * @param string $date       双日期
+     * @param string $separatrix 分割符
+     * @param bool   $isInt      是否为int
+     *
+     * @return array
+     */
+    public static function formattingDoubleDate($date, $separatrix = ' - ', $isInt = true)
+    {
+        $dates = explode($separatrix, $date);
+        return self::formattingDays($dates[0], $dates[1], $isInt);
+    }
+
+    /**
+     * 时间格式化
+     *
+     * @param      string /int  $start  时间/时间戳
+     * @param      string /int  $end  时间/时间戳
+     * @param bool $isInt 是否为int
+     *
+     * @return array
+     * @author lengbin(lengbin0@gmail.com)
+     */
+    public static function formattingDays($start, $end, $isInt = true)
+    {
+        if (is_int($start)) {
+            $start = date('Y-m-d', $start);
+        }
+        if (is_int($end)) {
+            $end = date('Y-m-d', $end);
+        }
+        $start = $start . ' 00:00:00';
+        $end = $end . ' 23:59:59';
+        if ($isInt) {
+            $start = strtotime($start);
+            $end = strtotime($end);
+        }
+        return [$start, $end];
+    }
+
+    /**
+     * 时间格式化
+     *
+     * @param   int $month 月份
+     * @param bool  $isInt 是否为int
+     *
+     * @return array
+     * @author lengbin(lengbin0@gmail.com)
+     */
+    public static function formattingMonth($month, $isInt = true)
+    {
+        if (strlen($month) < 3) {
+            $month = date("Y-{$month}-d");
+        }
+        $timestamp = strtotime($month);
+        $startTime = date('Y-m-1 00:00:00', $timestamp);
+        $mdays = date('t', $timestamp);
+        $endTime = date('Y-m-' . $mdays . ' 23:59:59', $timestamp);
+        if ($isInt) {
+            $startTime = strtotime($startTime);
+            $endTime = strtotime($endTime);
+        }
+        return [$startTime, $endTime];
+    }
+
 
 
 }
