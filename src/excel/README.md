@@ -164,30 +164,41 @@ class DemoImport extends BaseImport
  *                          ],
  *                          'rules' => [
  *                             [], 'money'
+ *                             [], 'in'
+ *                             [], 'date'
  *                          ]
  *                      ];
  *                      颜色都是16进制
  *                      目前只有 金额 格式化
  */
 
-$config = [
-    'width'  => '24',
-    'height' => '15',
-    'th'     =>[
-        'mobile'                => '招商人',
-        'username'              => '招商昵称',
-        'roles'                 => '招商角色',
-        'num'                   => '招商机构数',
-        'totalPrice'            => '交易总金额',
-        'investmentPrice'       => '招商奖励',
+ $config = [
+    'width'    => '24',
+    'height'   => '15',
+    'th'       => [
+        'created_at'              => '注册时间',
+        'account'                 => '租车ID',
+        'username'                => '昵称',
+        'mobile'                  => '昵称',
+        'gender'                  => '性别',
+        'age'                     => '年龄',
+        'drive_age'               => '驾龄',
+        'car_number'              => '拥有车辆',
+        'real_name_certification' => '认证状态',
+        'is_stop'                 => '用户状态',
     ],
-    'rules' => [
-        [['investmentPrice', 'totalPrice'], 'money'],
+    'rules'    => [
+        ['created_at', 'date'],
+        ['gender', 'in', 'range' => BaseHelper::getGenderType(false)],
+        ['real_name_certification', 'in', 'range' => [0 => '未认证', 1 => '已认证']],
+        ['is_stop', 'in', 'range' => [0 => '正常', 1 => '锁定']],
     ],
-    'fileName'=>date('Y-m-d',time()).'_招商统计',
+    'fileName' => date('Y-m-d', time()) . '_用户数据',
 ];
+$params = \Yii::$app->request->get();
+$user = $this->user->getUser($params, true);
 $export = ExcelFactory::exportInstance('StandardExport', $config);
-$export->load($res['data']);
+$export->load($user);
 $export->export();
 
 ```

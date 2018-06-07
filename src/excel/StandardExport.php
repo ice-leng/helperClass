@@ -50,8 +50,10 @@ class StandardExport implements  BaseExport
                                     'thFontColor' => '00ffffff',      // th 字体颜色， 默认为白色
                                     'tdBackGroundColor' =>['00ecf7ff','00222222'] / '00ecf7ff',   //  td 背景颜色, 默认为淡蓝色  可以是数组。 表示td 分割颜色， 字符串着为 全部颜色
                                 ],
-     *                          'rules' => [
+                               'rules' => [
                                    [], 'money'
+                                   [], 'in'
+                                   [], 'date'
                                 ]
                             ];
      *                      颜色都是16进制
@@ -130,6 +132,18 @@ class StandardExport implements  BaseExport
         return sprintf("%.{$decimals}f", $number);
     }
 
+    protected function range($val, $rule)
+    {
+        $range = !empty($rule['range']) ? $rule['range'] : [];
+        return !empty($range[$val]) ? $range[$val] : $val;
+    }
+
+    protected function date($val, $rule)
+    {
+        $format = !empty($rule['format']) ? $rule['format'] : 'Y-m-d H:i:s';
+        return date($format, $val);
+    }
+
     /**
      * 数据具体格式化
      * @param $field
@@ -141,8 +155,10 @@ class StandardExport implements  BaseExport
      * @issue
      */
     protected function format($rule, $val){
-        switch( strtolower( $rule ) ){
+        switch( strtolower( $rule[1] ) ){
             case 'money'  : $val = $this->money($val, 2); break;
+            case 'in' : $val = $this->range($val, $rule); break;
+            case 'date': $val = $this->date($val, $rule); break;
             default : throw new \Exception('没有' . $rule . '此功能， 请添加！'); break;
         }
         return $val;
@@ -161,7 +177,7 @@ class StandardExport implements  BaseExport
     protected function fieldValidate( $field, $val ){
         foreach( $this->_rules as $rules ){
             $fields = is_array( $rules[0] ) ? $rules[0] : [ $rules[0] ];
-            if( in_array( $field, $fields ) )$val = $this->format( $rules[1], $val );
+            if( in_array( $field, $fields ) )$val = $this->format( $rules, $val );
         }
         return !is_null($val) ? htmlspecialchars($val) : $this->placeholder;
     }
