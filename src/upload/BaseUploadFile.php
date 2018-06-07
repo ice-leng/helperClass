@@ -178,6 +178,9 @@ abstract class BaseUploadFile {
             return false;
         }
 
+        $pathinfo = pathinfo($this->uploadDir);
+        $basename = $pathinfo['basename'];
+
         $this->uploadDir = $this->uploadDir.'/'.date('Y-m-d');
 
 
@@ -200,12 +203,12 @@ abstract class BaseUploadFile {
         //用于upyun继承提取公用
         $this->invoke($uniName);
 
-        $res=[
-            'resource'=>$this->uploadDir.'/'.$uniName,
-            'newName'=>$uniName,
-            'orgName'=>$this->name,
-            'size'=>$this->size,
-            'path'=>'/' . date('Y-m-d') . '/' . $uniName
+        $res = [
+            'resource' => $this->uploadDir . '/' . $uniName,
+            'newName'  => $uniName,
+            'orgName'  => $this->name,
+            'size'     => $this->size,
+            'path'     => '/' . $basename . '/' . date('Y-m-d') . '/' . $uniName,
         ];
         if(isset($this->suffix)){
             $res['suffix']=$this->suffix;
