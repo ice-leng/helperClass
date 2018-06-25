@@ -92,13 +92,14 @@ class MysqlQueryMaker
 
         return trim($sql);
     }
-
+    
     public function formatWhere($wheres, $type = '=', $connect = 'AND')
     {
         $sql = '';
         if (is_array($wheres)) {
             foreach ($wheres as $name => $value) {
-                if (!empty($this->params[$value])) {
+                $inVal = [];
+                if (!is_array($value) && !empty($this->params[$value])) {
                     $val = $value;
                 } elseif ($value instanceof MysqlOrm) {
                     $query = $value->create();
@@ -106,12 +107,21 @@ class MysqlQueryMaker
                     $this->params = array_merge($query->params(), $this->params);
                     $val = $query->sql();
                 } else {
-                    $val = ':q' . $this->i;
-                    $this->i++;
-                    if (strtoupper($type) === 'LIKE') {
-                        $value = '%' . $value . '%';
+                    if (!is_array($value)) {
+                        $value = [$value];
                     }
-                    $this->params[$val] = $value;
+                    foreach ($value as $v){
+                        $val = ':q' . $this->i;
+                        $this->i++;
+                        if (strtoupper($type) === 'LIKE') {
+                            $v = '%' . $v . '%';
+                        }
+                        if (in_array($type, ['IN', 'NOT IN'])) {
+                            $inVal[] = $val;
+                        }
+                        $this->params[$val] = $v;
+                    }
+
                 }
                 if (in_array($type, ['BETWEEN', 'NOT BETWEEN'])) {
                     if (in_array($connect, ['BETWEEN', 'NOT BETWEEN'])) {
@@ -119,6 +129,9 @@ class MysqlQueryMaker
                     } else {
                         $sql .= "`{$name}` {$type} {$val} " . $connect;
                     }
+                } elseif (in_array($type, ['IN', 'NOT IN'])) {
+                    $val = implode(',', $inVal);
+                    $sql .= " (`{$name}` {$type} ({$val})) " . $connect;
                 } else {
                     $sql .= " (`{$name}` {$type} {$val}) " . $connect;
                 }
@@ -157,7 +170,7 @@ class MysqlQueryMaker
                     if (is_string($wheres[1])) {
                         $wheres[1] = [$wheres[1]];
                     }
-                    $sql .= $this->formatWhere([$wheres[0] => implode("','", $wheres[1])], $type);
+                    $sql .= $this->formatWhere([$wheres[0] => $wheres[1]], $type);
                     break;
                 case in_array($type, ['>', '>=', '=', '<', '<=']):
                     $sql .= $this->formatWhere([$wheres[0] => $wheres[1]], $type);
@@ -167,7 +180,22 @@ class MysqlQueryMaker
                     break;
             }
         } else {
-            $sql .= $this->formatWhere($wheres);
+            $status = false;
+            $and = 'and';
+            if (is_array($wheres)) {
+                foreach ($wheres as $name => $values) {
+                    if (is_array($values)) {
+                        $status = true;
+                        $sql .= $this->constructWhere(['in', $name, $values]) . strtoupper($and) . ' ';
+                        unset($wheres[$name]);
+                    }
+                }
+            }
+            if ($status) {
+                $sql = substr($sql, 0, strripos($sql, $and));
+            }else {
+                $sql .= $this->formatWhere($wheres);
+            }
         }
         return $sql;
     }

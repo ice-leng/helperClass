@@ -44,7 +44,7 @@ class DirHelper
      * @return bool
      * @author lengbin(lengbin0@gmail.com)
      */
-    public static function emptyDir($dir, $isDelete = false)
+    public static function emptyDir($dir, array $filterDir = [], array $filterFile = [], $isDelete = false)
     {
         if (empty(self::$rootDir)) {
             self::$rootDir = $dir;
@@ -55,8 +55,14 @@ class DirHelper
             if ($file !== '.' && $file !== '..') {
                 $fullPath = $dir . '/' . $file;
                 if (!is_dir($fullPath)) {
+                    if (in_array($fullPath, $filterFile)) {
+                        continue;
+                    }
                     @unlink($fullPath);
                 } else {
+                    if (in_array($fullPath, $filterDir)) {
+                        continue;
+                    }
                     self::emptyDir($fullPath, $isDelete);
                 }
             }

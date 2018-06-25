@@ -103,7 +103,7 @@ class PdoMysqlHelper extends BaseMysqlHelper implements MysqlHelperInterface
      */
     public function one($sql, array $params = [], array $rule = [])
     {
-        $this->execute($sql, $params, $rule, true);
+        $this->execute($sql, $params, $rule);
         return $this->query->fetch(\PDO::FETCH_ASSOC);
     }
 
@@ -119,7 +119,7 @@ class PdoMysqlHelper extends BaseMysqlHelper implements MysqlHelperInterface
      */
     public function all($sql, array $params = [], array $rule = [])
     {
-        $this->execute($sql, $params, $rule, true);
+        $this->execute($sql, $params, $rule);
         return $this->query->fetchAll(\PDO::FETCH_ASSOC);
     }
 

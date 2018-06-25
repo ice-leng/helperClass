@@ -37,7 +37,7 @@ class ReadDirHelper
     //命名空间
     private $_namespace;
     // 过路目录
-    private $_filterDirs = [['.idea', '.svn', '.git']];
+    private $_filterDirs = [['.idea', '.svn', '.git', '.DS_Store']];
     // 过滤文件
     private $_filterFiles = [];
     // 文件
@@ -136,7 +136,7 @@ class ReadDirHelper
                         if ($this->_isNamespace) {
                             $pathInfo = pathinfo($path);
                             if (!$this->_namespace) {
-                                $filePath = substr($pathInfo['dirname'], strpos($pathInfo['dirname'], $this->_rootDirName));
+                                $filePath = substr($pathInfo['dirname'], strrpos($pathInfo['dirname'], $this->_rootDirName));
                                 $filePath = $filePath . '/' . $pathInfo['filename'];
                                 $path = str_replace('/', '\\', $filePath);
                             } else {

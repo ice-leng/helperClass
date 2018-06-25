@@ -5,6 +5,8 @@
     SendTarget 第三方消息推送
     支持 qq 消息推送
     支持 邮件 消息推送
+    composer require slince/smartqq
+    
     
     // 使用方法
     //components 下
@@ -21,6 +23,7 @@
              [
                  'class' => 'app\common\base\SendTarget',
                  'levels' => ['error', 'warning'],
+                 'path'   => '', // path 定义二维码图片生成路径，
                  'qq' => [
                      'enable' =>  true,
                      'sender' => [
@@ -42,8 +45,10 @@
              ],
          ],
      ],
-    
+        
      // 使用说明
+     // 首先让项目 报错，访问二维码，然后登陆qq
+
      
      /**
       * 发送类型 qq, 邮箱 , 短信 , 钉钉, 微信， 其他通信
