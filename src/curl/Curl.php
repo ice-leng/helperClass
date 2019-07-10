@@ -36,7 +36,7 @@ class Curl
     /**
      * 登陆信息
      *
-     * @param string  $url   登陆 url
+     * @param string  $url 登陆 url
      * @param string  $method
      * @param         string / array $data 登陆参数
      * @param boolean $isAjax
@@ -120,7 +120,7 @@ class Curl
         curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieJar);
         curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieJar);
         curl_setopt($ch, CURLOPT_TIMEOUT, 240);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_NOBODY, 0);
         curl_setopt($ch, CURLOPT_USERAGENT, $agent);
@@ -140,23 +140,28 @@ class Curl
      *
      * @param string  $url
      * @param string  $method
-     * @param         string /array   $data
+     * @param array   $data
      * @param boolean $isAjax
      *
      * @return mixed
      * @author lengbin(lengbin0@gmail.com)
      */
-    private function _exec($url, $method = 'get', $data = null, $isAjax = false)
+    private function _exec($url, $method = 'get', $data = [], $isAjax = false)
     {
-        curl_setopt($this->_ch, CURLOPT_URL, $url);
         curl_setopt($this->_ch, CURLOPT_FOLLOWLOCATION, 1);
         if ('POST' === strtoupper($method)) {
             curl_setopt($this->_ch, CURLOPT_POST, 1);
-            if (is_array($data)) {
+            if (!empty($data)) {
                 $data = http_build_query($data);
+                curl_setopt($this->_ch, CURLOPT_POSTFIELDS, $data);
             }
-            curl_setopt($this->_ch, CURLOPT_POSTFIELDS, $data);
+        } else {
+            if (!empty($data)) {
+                $data = http_build_query($data);
+                $url .= '?' . $data;
+            }
         }
+        curl_setopt($this->_ch, CURLOPT_URL, $url);
         if ($isAjax) {
             $header = [
                 'X-Requested-With:XMLHttpRequest',
@@ -175,14 +180,14 @@ class Curl
      * 抓取页面
      *
      * @param string  $url
+     * @param array   $data
      * @param string  $method
-     * @param         string /array $data
      * @param boolean $isAjax
      *
      * @return mixed
      * @author lengbin(lengbin0@gmail.com)
      */
-    public function getHtml($url, $method = 'get', $data = '', $isAjax = false)
+    public function getHtml($url, $data = [], $method = 'get', $isAjax = false)
     {
         try {
             $cookieJar = $this->getCookieFile();
@@ -205,6 +210,5 @@ class Curl
         }
         $this->_ch = '';
     }
-
 
 }

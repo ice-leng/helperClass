@@ -38,7 +38,7 @@ class DirHelper
     /**
      * 递归清空目录
      *
-     * @param string  $dir     文件夹路径
+     * @param string  $dir      文件夹路径
      * @param boolean $isDelete 是否删除根目录目录
      *
      * @return bool
@@ -147,7 +147,7 @@ class DirHelper
                 } else {
                     if (!in_array($file, $filterFile)) {
                         @copy($src . "/" . $file, $dst . "/" . $file);
-                        if($isUnlink){
+                        if ($isUnlink) {
                             @unlink($src . "/" . $file);
                         }
                     }
@@ -155,6 +155,31 @@ class DirHelper
             }
         }
         closedir($dir);
+    }
+
+    /**
+     * 目录下是否有文件
+     *
+     * @param $path
+     *
+     * @return bool
+     *
+     * @author lengbin(lengbin0@gmail.com)
+     */
+    public static function dirExistFile($path)
+    {
+        if (!is_dir($path)) {
+            return false;
+        }
+        $files = scandir($path);
+        // 删除  "." 和 ".."
+        unset($files[0]);
+        unset($files[1]);
+        // 判断是否为空
+        if (!empty($files[2])) {
+            return true;
+        }
+        return false;
     }
 
 }

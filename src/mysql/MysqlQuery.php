@@ -18,18 +18,18 @@ namespace lengbin\helper\mysql;
  */
 class MysqlQuery
 {
-    public $db;
+    protected $db;
 
-    public $select;
-    public $from;
-    public $where;
-    public $join;
-    public $orderBy;
-    public $groupBy;
-    public $having;
-    public $limit;
-    public $offset;
-    public $params;
+    protected $select;
+    protected $from;
+    protected $where;
+    protected $join;
+    protected $orderBy;
+    protected $groupBy;
+    protected $having;
+    protected $limit;
+    protected $offset;
+    protected $params;
 
     /**
      * @param $db
